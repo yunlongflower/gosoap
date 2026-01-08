@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	soapPrefix = "soap"
+	soapPrefix                            = "soap"
 	customEnvelopeAttrs map[string]string = nil
 )
 
@@ -35,6 +35,9 @@ func (c process) MarshalXML(e *xml.Encoder, _ xml.StartElement) error {
 		if namespace == "" && len(schema.Imports) > 0 {
 			namespace = schema.Imports[0].Namespace
 		}
+	}
+	if namespace == "" && len(c.Client.Definitions.Imports) > 0 {
+		namespace = c.Client.Definitions.Imports[0].Namespace
 	}
 
 	tokens.startEnvelope()
@@ -130,7 +133,7 @@ func (tokens *tokenData) startEnvelope() {
 		e.Attr = make([]xml.Attr, 0)
 		for local, value := range customEnvelopeAttrs {
 			e.Attr = append(e.Attr, xml.Attr{
-				Name: xml.Name{Space: "", Local: local},
+				Name:  xml.Name{Space: "", Local: local},
 				Value: value,
 			})
 		}
@@ -219,7 +222,7 @@ func (tokens *tokenData) startBody(m, n string) error {
 			Local: m,
 		},
 		Attr: []xml.Attr{
-			{Name: xml.Name{Space: "", Local: "xmlns"}, Value: n},
+			{Name: xml.Name{Space: "", Local: "xmlns:m"}, Value: n},
 		},
 	}
 
